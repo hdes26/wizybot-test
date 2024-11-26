@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:13
+    restart: always
+    container_name: wizybot.postgres
+    ports:
+      - 5432:5432
+    networks:
+      - mi-red
+    environment:
+      - POSTGRES_USER=wizyuser
+      - POSTGRES_PASSWORD=wizypassword
+      - POSTGRES_DB=wizydatabase
+
+networks:
+  mi-red:
+    driver: bridge
