@@ -1,4 +1,4 @@
-export enum BotType {
+export enum BotTypeEnum {
   PRODUCTS = 'products',
   CURRENCIES = 'currencies',
 }
