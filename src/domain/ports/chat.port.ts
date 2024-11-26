@@ -1,14 +1,14 @@
 import {
-  CreateChatDto,
-  CreateChatResponseDto,
-  SendMessageDto,
-  SendMessageResponseDto,
+  CreateChatDTO,
+  CreateChatResponseDTO,
+  SendMessageDTO,
+  SendMessageResponseDTO,
 } from '@domain/dtos';
 
 export abstract class ICreateChatUsecase {
-  abstract handle(payload: CreateChatDto): Promise<CreateChatResponseDto>;
+  abstract handle(payload: CreateChatDTO): Promise<CreateChatResponseDTO>;
 }
 
 export abstract class ISendMessageUsecase {
-  abstract handle(payload: SendMessageDto): Promise<SendMessageResponseDto>;
+  abstract handle(payload: SendMessageDTO): Promise<SendMessageResponseDTO>;
 }
