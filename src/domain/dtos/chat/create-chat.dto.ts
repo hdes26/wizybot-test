@@ -1,4 +1,4 @@
-import { BotType } from '@domain/enum';
+import { BotTypeEnum } from '@domain/enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsIP, IsNotEmpty } from 'class-validator';
 
@@ -9,7 +9,7 @@ export class CreateChatDto {
   userIp: string;
 
   @ApiProperty()
-  @IsEnum(BotType)
+  @IsEnum(BotTypeEnum)
   @IsNotEmpty()
-  botType: BotType;
+  botType: BotTypeEnum;
 }
