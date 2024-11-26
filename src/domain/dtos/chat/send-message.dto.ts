@@ -10,5 +10,5 @@ export class SendMessageDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  userId: string;
+  userIp: string;
 }
