@@ -3,11 +3,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { json, urlencoded } from 'express';
 import { AppModule } from './infrastructure/modules/app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 14001;
   const logger = new Logger();
+
+  const configService = app.get(ConfigService);
+
+  const port = configService.get<number>('config.httpServer.port') || 14001;
 
   const project = 'wizybot-test';
 
