@@ -6,11 +6,21 @@ import {
 } from '@domain/dtos';
 import { ICreateChatUsecase, ISendMessageUsecase } from '@domain/ports';
 import { SwaggerDocs } from '@infrastructure/decorators';
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { BasicGuard } from '@infrastructure/guards/basic';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('CHAT')
 @Controller('chat')
+@ApiBasicAuth()
+@UseGuards(BasicGuard)
 export class ChatController {
   constructor(
     private readonly createChatUseCase: ICreateChatUsecase,
