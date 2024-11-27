@@ -1,12 +1,23 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('config', () => ({
-  port: process.env.PORT,
+  nodeEnv: process.env.NODE_ENV,
+  httpServer: {
+    port: process.env.HTTP_SERVER_PORT,
+  },
+  swagger: {
+    user: process.env.SWAGGER_USER,
+    password: process.env.SWAGGER_PASS,
+  },
   database: {
     host: process.env.DB_HOST,
-    name: process.env.DB_NAME,
+    port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
+    name: process.env.DB_DATABASE,
+  },
+  httpBasicAuth: {
+    user: process.env.HTTP_BASIC_USER,
+    password: process.env.HTTP_BASIC_PASS,
   },
 }));
