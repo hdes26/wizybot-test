@@ -10,7 +10,7 @@ export class RunSeederService implements OnApplicationBootstrap {
   ) {}
 
   async run() {
-    if (this.configService.get<string>('NODE_ENV') === 'development') {
+    if (this.configService.get<string>('config.nodeEnv') === 'development') {
       console.log('Executing seeder...');
       await this.botSeederUsecase.handle();
     }

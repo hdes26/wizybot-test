@@ -25,12 +25,14 @@ export class BotSeederUsecase implements IBotSeederUsecase {
       const botData: Partial<Bot>[] = [
         {
           name: 'ProductBot',
-          behavior: 'Handles product-related queries',
+          behavior:
+            'You are a helpful assistant that can help with finding products for specific needs, such as gifts, gadgets, books, etc. You can recommend products based on user queries.',
           type: BotTypeEnum.PRODUCTS,
         },
         {
           name: 'CurrencyBot',
-          behavior: 'Handles currency-related queries',
+          behavior:
+            'You are a helpful assistant that understands currencies details and provides recommendations.',
           type: BotTypeEnum.CURRENCIES,
         },
       ];
