@@ -49,7 +49,7 @@ La base de datos está preconfigurada con datos iniciales gracias a los seeders 
    - `ProductBot`: Bot enfocado a responder preguntas sobre productos.
    - `CurrencyBot`: Bot enfocado a responder preguntas sobre monedas.
 
-Esto permite probar el sistema de inmediato sin necesidad de crear los datos manualmente.
+Esto permite probar el sistema de inmediato sin necesidad de crear los datos manualmente. Aunque el tipo de bots guardados aquí no es crucial para la funcionalidad actual, se ha implementado con la idea de mejorar la administración y escalabilidad futura. Tener varios bots en la base de datos facilitará la gestión y permitirá una mejor expansión y personalización del sistema.
 
 ## Imagen Docker 🐳
 

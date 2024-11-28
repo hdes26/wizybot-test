@@ -7,8 +7,11 @@ export class Message extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 200 })
+  @Column()
   message: string;
+
+  @Column({ length: 50 })
+  sender: string;
 
   @ManyToOne(() => Chat, (chat) => chat.messages)
   chat: Chat;
