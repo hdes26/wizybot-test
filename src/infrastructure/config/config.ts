@@ -23,4 +23,10 @@ export default registerAs('config', () => ({
   openai: {
     key: process.env.OPENAI_API_KEY,
   },
+  weather: {
+    key: process.env.WEATHER_API_KEY,
+  },
+  currencies: {
+    key: process.env.CURRENCIES_API_KEY,
+  },
 }));
