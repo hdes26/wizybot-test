@@ -12,4 +12,5 @@ export const validationSchema = Joi.object({
   DB_DATABASE: Joi.string().required(),
   HTTP_BASIC_USER: Joi.string().required(),
   HTTP_BASIC_PASS: Joi.string().required(),
+  OPENAI_API_KEY: Joi.string().required(),
 });

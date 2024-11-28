@@ -20,4 +20,13 @@ export default registerAs('config', () => ({
     user: process.env.HTTP_BASIC_USER,
     password: process.env.HTTP_BASIC_PASS,
   },
+  openai: {
+    key: process.env.OPENAI_API_KEY,
+  },
+  weather: {
+    key: process.env.WEATHER_API_KEY,
+  },
+  currencies: {
+    key: process.env.CURRENCIES_API_KEY,
+  },
 }));

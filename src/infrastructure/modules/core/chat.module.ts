@@ -1,11 +1,12 @@
 import { Global, Module, Scope } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ICreateChatUsecase, ISendMessageUsecase } from '@domain/ports';
-import { IChatRepository } from '@domain/repositories';
+import { IBotRepository, IChatRepository } from '@domain/repositories';
 import { ChatController } from '@infrastructure/controllers';
 import { Bot, Chat } from '@infrastructure/entities';
-import { ChatRepository } from '@infrastructure/repositories';
+import { BotRepository, ChatRepository } from '@infrastructure/repositories';
 import { CreateChatUsecase, SendMessageUsecase } from '@usecases/index';
+import { FileService, OpenAIService } from '@infrastructure/services';
 
 @Global()
 @Module({
@@ -26,6 +27,12 @@ import { CreateChatUsecase, SendMessageUsecase } from '@usecases/index';
       provide: IChatRepository,
       useClass: ChatRepository,
     },
+    {
+      provide: IBotRepository,
+      useClass: BotRepository,
+    },
+    FileService,
+    OpenAIService,
   ],
   exports: [IChatRepository],
 })
