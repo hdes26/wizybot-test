@@ -13,4 +13,6 @@ export const validationSchema = Joi.object({
   HTTP_BASIC_USER: Joi.string().required(),
   HTTP_BASIC_PASS: Joi.string().required(),
   OPENAI_API_KEY: Joi.string().required(),
+  WEATHER_API_KEY: Joi.string().required(),
+  CURRENCIES_API_KEY: Joi.string().required(),
 });
