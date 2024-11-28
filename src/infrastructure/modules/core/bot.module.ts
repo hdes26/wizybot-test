@@ -5,7 +5,7 @@ import { IBotRepository } from '@domain/repositories';
 import { IBotSeederUsecase } from '@domain/ports';
 import { BotRepository } from '@infrastructure/repositories';
 import { BotSeederUsecase } from '@usecases/index';
-import { RunSeederService } from '@infrastructure/services/run-seeder.service';
+import { RunSeederService } from '@infrastructure/services';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Bot])],

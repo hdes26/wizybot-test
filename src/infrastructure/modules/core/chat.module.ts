@@ -6,6 +6,7 @@ import { ChatController } from '@infrastructure/controllers';
 import { Bot, Chat } from '@infrastructure/entities';
 import { ChatRepository } from '@infrastructure/repositories';
 import { CreateChatUsecase, SendMessageUsecase } from '@usecases/index';
+import { FileService, OpenAIService } from '@infrastructure/services';
 
 @Global()
 @Module({
@@ -26,6 +27,8 @@ import { CreateChatUsecase, SendMessageUsecase } from '@usecases/index';
       provide: IChatRepository,
       useClass: ChatRepository,
     },
+    FileService,
+    OpenAIService,
   ],
   exports: [IChatRepository],
 })
