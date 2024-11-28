@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ICreateChatUsecase, ISendMessageUsecase } from '@domain/ports';
 import { IBotRepository, IChatRepository } from '@domain/repositories';
 import { ChatController } from '@infrastructure/controllers';
-import { Bot, Chat } from '@infrastructure/entities';
+import { Bot, Chat, Message } from '@infrastructure/entities';
 import { BotRepository, ChatRepository } from '@infrastructure/repositories';
 import { CreateChatUsecase, SendMessageUsecase } from '@usecases/index';
 import { FileService, OpenAIService } from '@infrastructure/services';

@@ -1,10 +1,15 @@
 import { SendMessageDTO, SendMessageResponseDTO } from '@domain/dtos';
 import { BotTypeEnum } from '@domain/enum';
 import { IProduct } from '@domain/interfaces';
+import { ChatModel } from '@domain/models';
 import { ISendMessageUsecase } from '@domain/ports';
-import { IBotRepository, IChatRepository } from '@domain/repositories';
+import {
+  IBotRepository,
+  IChatRepository,
+  IMessageRepository,
+} from '@domain/repositories';
 import { OpenAIService } from '@infrastructure/services';
-import { FileService } from '@infrastructure/services/file.service'; // Asegúrate de importar el servicio
+import { FileService } from '@infrastructure/services/file.service';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 @Injectable()
@@ -14,51 +19,106 @@ export class SendMessageUsecase implements ISendMessageUsecase {
   constructor(
     private readonly repository: IChatRepository,
     private readonly botRepository: IBotRepository,
+    private readonly messageRepository: IMessageRepository,
     private readonly openAIService: OpenAIService,
     private readonly fileService: FileService,
   ) {}
 
   async handle(payload: SendMessageDTO): Promise<SendMessageResponseDTO> {
     try {
-      const exists = await this.repository.findOne({
-        where: { userIp: payload.userIp },
-      });
-      if (!exists) throw new NotFoundException(`Chat not found.`);
+      const chat = await this.getChatByUserIp(payload.userIp);
 
-      const userQuery = payload.message;
+      await this.createMessage(payload.message, chat, 'client');
 
-      const { functionCall } = await this.openAIService.getFunction(userQuery);
+      const { functionCall } = await this.openAIService.getFunction(
+        payload.message,
+      );
 
-      if (functionCall.name === 'searchProducts') {
-        const products = await this.searchProducts(functionCall);
+      const response = await this.handleFunctionCall(functionCall);
 
-        const response = await this.generateProductsResponse(products);
-        return { answer: response };
-      }
+      await this.createMessage(response, chat, 'bot');
 
-      if (functionCall.name === 'convertCurrencies') {
-        const response = await this.generateCurrenciesResponse(functionCall);
-        return { answer: response };
-      }
-
-      if (functionCall.name === 'recommendGift') {
-        const response = await this.generateRecommendationResponse();
-        return { answer: response };
-      }
-
-      if (functionCall.name === 'getWeather') {
-        const response = await this.generateWeatherResponse(functionCall);
-        return { answer: response };
-      }
-
-      if (functionCall.name === 'getPopulation') {
-        const response = await this.generatePopulationResponse(functionCall);
-        return { answer: response };
-      }
+      return { answer: response };
     } catch (error) {
-      this.logger.error('Error in chat', error);
+      this.logger.error('Error in chat handling', error);
       throw error;
     }
+  }
+
+  private async getChatByUserIp(userIp: string): Promise<ChatModel> {
+    const chat = await this.repository.findOne({ where: { userIp } });
+
+    if (!chat) {
+      throw new NotFoundException(`Chat not found for user IP: ${userIp}`);
+    }
+
+    return chat;
+  }
+
+  private async createMessage(
+    message: string,
+    chat: ChatModel,
+    sender: 'client' | 'bot',
+  ): Promise<void> {
+    const newMessage = await this.messageRepository.create();
+    Object.assign(newMessage, {
+      message,
+      sender,
+      chat,
+    });
+    await this.messageRepository.save(newMessage);
+  }
+
+  private async handleFunctionCall(functionCall: {
+    name: string;
+    arguments: string;
+  }): Promise<string> {
+    switch (functionCall.name) {
+      case 'searchProducts':
+        return this.handleSearchProducts(functionCall);
+      case 'convertCurrencies':
+        return this.handleConvertCurrencies(functionCall);
+      case 'recommendGift':
+        return this.handleRecommendGift();
+      case 'getWeather':
+        return this.handleGetWeather(functionCall);
+      case 'getPopulation':
+        return this.handleGetPopulation(functionCall);
+      default:
+        throw new NotFoundException(
+          `Function ${functionCall.name} not supported.`,
+        );
+    }
+  }
+
+  private async handleSearchProducts(functionCall: {
+    name: string;
+    arguments: string;
+  }): Promise<string> {
+    const products = await this.searchProducts(functionCall);
+    return this.generateProductsResponse(products);
+  }
+
+  private async handleConvertCurrencies(functionCall: {
+    arguments: string;
+  }): Promise<string> {
+    return this.generateCurrenciesResponse(functionCall);
+  }
+
+  private async handleRecommendGift(): Promise<string> {
+    return this.generateRecommendationResponse();
+  }
+
+  private async handleGetWeather(functionCall: {
+    arguments: string;
+  }): Promise<string> {
+    return this.generateWeatherResponse(functionCall);
+  }
+
+  private async handleGetPopulation(functionCall: {
+    arguments: string;
+  }): Promise<string> {
+    return this.generatePopulationResponse(functionCall);
   }
 
   private async searchProducts(functionCall: {
@@ -67,15 +127,13 @@ export class SendMessageUsecase implements ISendMessageUsecase {
   }): Promise<IProduct[]> {
     const csvData = await this.fileService.readProductsFile();
     const products = await this.fileService.parseCSV(csvData);
-
     return this.openAIService.searchProducts(functionCall, products);
   }
 
   private async generateCurrenciesResponse(functionCall: {
-    name: string;
     arguments: string;
   }): Promise<string> {
-    return await this.openAIService.generateCurrenciesResponse(functionCall);
+    return this.openAIService.generateCurrenciesResponse(functionCall);
   }
 
   private async generateProductsResponse(
@@ -84,27 +142,22 @@ export class SendMessageUsecase implements ISendMessageUsecase {
     const { behavior } = await this.botRepository.findOne({
       where: { type: BotTypeEnum.PRODUCTS },
     });
-    return await this.openAIService.generateProductsResponse(
-      products,
-      behavior,
-    );
+    return this.openAIService.generateProductsResponse(products, behavior);
   }
 
   private async generateRecommendationResponse(): Promise<string> {
-    return await this.openAIService.generateRecommendationResponse();
+    return this.openAIService.generateRecommendationResponse();
   }
 
   private async generateWeatherResponse(functionCall: {
-    name: string;
     arguments: string;
   }): Promise<string> {
-    return await this.openAIService.generateWeatherResponse(functionCall);
+    return this.openAIService.generateWeatherResponse(functionCall);
   }
 
   private async generatePopulationResponse(functionCall: {
-    name: string;
     arguments: string;
   }): Promise<string> {
-    return await this.openAIService.generatePopulationResponse(functionCall);
+    return this.openAIService.generatePopulationResponse(functionCall);
   }
 }

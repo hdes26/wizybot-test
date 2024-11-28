@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 services:
   postgres:
     image: postgres:13
@@ -12,6 +12,20 @@ services:
       - POSTGRES_USER=wizyuser
       - POSTGRES_PASSWORD=wizypassword
       - POSTGRES_DB=wizydatabase
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mi-servidor
+    ports:
+      - 7000:7000
+    env_file:
+      - .env
+    networks:
+      - mi-red
+    depends_on:
+      - postgres
 
 networks:
   mi-red:
